@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WSP ChatBot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            cursor: default;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 0;
+            background-color: #121212;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            padding-bottom: 70px;
+            background-color: #121212;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            height: auto;
+            color: #e0e0e0;
+        }
+        
+        /* Robot Eyes Styles */
+        .bot {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .robot-face {
+            margin-top: 20px;
+            width: 200px;
+            height: 150px;
+            background-color: #2d2d2d;
+            border-radius: 13%;
+            position: relative;
+            border: 3px solid #ffffff5e;
+            box-shadow: inset 0px 0px 20px 2px rgb(241 237 241 / 22%);
+        }
+        .eyes-container {
+            display: flex;
+            justify-content: space-between;
+            width: 120px;
+            position: absolute;
+            top: 40px;
+            left: 39px;
+        }
+        .eye {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            border: 3px solid;
+            position: relative;
+            overflow: hidden;
+        }
+        .pupil {
+            width: 15px;
+            height: 15px;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        /* Improved Eyelid for blinking effect */
+        .eyelid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #2d2d2d;
+            top: 0;
+            left: 0;
+            border-radius: 0 0 50% 50%;
+            animation: blink 4s infinite;
+            z-index: 2; /* Ensure eyelid covers pupil when blinking */
+            transform-origin: top;
+            transform: scaleY(0);
+        }
+        @keyframes blink {
+            0%, 90% { transform: scaleY(0); }
+            92%, 98% { transform: scaleY(1); }
+            100% { transform: scaleY(0); }
+        }
+        /* Make blinking faster when typing */
+        .typing .eyelid {
+            animation: blink 2s infinite;
+        }
+
+        .robot-mouth {
+            width: 45px;
+            height: 7px;
+            background-color: white;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 25px;
+            left: 38.5%;
+            transition: all 0.3s ease;
+        }
+        .robot-face:hover .robot-mouth {
+            height: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        .typing .robot-mouth {
+            animation: mouth-move 0.5s infinite alternate;
+        }
+        @keyframes mouth-move {
+            0% { 
+                height: 5px; 
+            }
+            100% { 
+                height: 20px;
+                border-radius: 5px 5px 10px 10px;
+            }
+        }
+        
+        /* Rest of your existing styles... */
+        #response h3 {
+            color: #bb86fc;
+            font-size: 1.2em;
+        }
+        #response strong {
+            color: #ff6e6e;
+        }
+        #response ul {
+            padding-left: 20px;
+        }
+        #response li {
+            margin-bottom: 5px;
+        }
+        #response p {
+            color: #e0e0e0;
+        }
+        #response pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        #response code {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        #response a {
+            color: #82b1ff;
+        }
+        #response blockquote {
+            border-left: 3px solid #bb86fc;
+            padding-left: 10px;
+            color: #b0b0b0;
+            margin-left: 0;
+        }
+        .form-container {
+            position: sticky;
+            bottom: 0;
+            background: #1e1e1e;
+            padding: 15px;
+            border-top: 1px solid #333;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        }
+        .form-group{
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 0;
+        }
+        .form-control{
+            margin-right: 10px;
+            resize: none;
+            min-height: 38px;
+            max-height: 150px;
+            overflow-y: auto;
+            line-height: 1.5;
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #444;
+        }
+        .form-control:focus {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #bb86fc;
+            box-shadow: 0 0 0 0.2rem rgba(187, 134, 252, 0.25);
+        }
+        .btn, .btn-success{
+            width: 20%;
+            height: 38px;
+            white-space: nowrap;
+            background-color: #bb86fc;
+            border-color: #bb86fc;
+            color: #121212;
+        }
+        .btn:hover, .btn-success:hover {
+            background-color: #9a67ea;
+            border-color: #9a67ea;
+        }
+        .user-message {
+            color: #82b1ff;
+            margin-bottom: 10px;
+        }
+        .bot-message {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+        hr {
+            border-color: #333;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bot">
+            <div class="robot-face" id="robotFace">
+                <div class="eyes-container">
+                    <div class="eye">
+                        <div class="eyelid"></div>
+                        <div class="pupil" id="leftPupil"></div>
+                    </div>
+                    <div class="eye">
+                        <div class="eyelid"></div>
+                        <div class="pupil" id="rightPupil"></div>
+                    </div>
+                </div>
+                <div class="robot-mouth"></div>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div id="response"></div>
+        </div>
+        <div class="form-container">
+            <div class="form-group">
+                <textarea
+                    class="form-control"
+                    id="userInput"
+                    placeholder="Enter your question"
+                    rows="1"></textarea>    
+                <button class="btn btn-success" onclick="sendMessage()">Ask</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Sofia Prompt Configuration
+        const Sofia_Prompt = {
+            name: "Sofia",
+            personality: "friendly and helpful assistant",
+            rules: [
+                "Respond in Vietnamese when user speaks Vietnamese",
+                "Respond in English when user speaks English",
+                "Address the user as 'anh' when speaking Vietnamese",
+                "Address the user as 'Boss' when speaking English",
+                "Maintain a professional yet friendly tone",
+                "Remember previous conversations and maintain context"
+            ]
+        };
+
+        // Display welcome message when page loads
+        /*document.addEventListener('DOMContentLoaded', function() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello, how can I help?</div>`;
+        });*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = 
+                `<div class="bot-message">
+                    <strong>${Sofia_Prompt.name}:</strong> Xin chào anh, em có thể giúp gì cho anh hôm nay?
+                    <br>(Hello Boss, how can I help you today?)
+                </div>`;
+            /*
+            // Add welcome message to history
+            conversationHistory.push({
+                role: "assistant",
+                content: "Xin chào anh, em có thể giúp gì cho anh hôm nay? (Hello Boss, how can I help you today?)"
+            });*/
+        });
+
+        // Make robot talk when typing
+        const robotFace = document.getElementById('robotFace');
+        const userInput = document.getElementById('userInput');
+        
+        userInput.addEventListener('focus', () => {
+            robotFace.classList.add('typing');
+        });
+        
+        userInput.addEventListener('blur', () => {
+            robotFace.classList.remove('typing');
+        });
+        
+        // Auto-resize textarea as user types
+        document.getElementById('userInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Handle Enter key (Shift+Enter for new line, Enter alone to send)
+        document.getElementById('userInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        async function sendMessage() {
+            const inputElement = document.getElementById('userInput');
+            const input = inputElement.value.trim();
+            const responseDiv = document.getElementById('response');
+            const robotFace = document.getElementById('robotFace');
+            
+            if (!input) {
+                responseDiv.innerHTML += '<div class="text-warning">Please enter a message.</div>';
+                return;
+            }
+            
+            // Add user message to chat
+            responseDiv.innerHTML += `<div class="user-message"><strong>You:</strong> ${input.replace(/\n/g, '<br>')}</div><hr>`;
+            
+            // Scroll to bottom
+            document.querySelector('.chat-container').scrollTop = document.querySelector('.chat-container').scrollHeight;
+
+            // Show loading
+            const loadingDiv = document.createElement('div');
+            loadingDiv.innerHTML = '<div class="text-muted">Bot is typing...</div>';
+            responseDiv.appendChild(loadingDiv);
+            
+            // Make robot talk
+            robotFace.classList.add('typing');
+            
+            // Clear input and reset its height
+            inputElement.value = '';
+            inputElement.style.height = 'auto';
+
+            try {
+                const response = await fetch(
+                    'https://openrouter.ai/api/v1/chat/completions',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer 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',
+                            'Content-Type': 'application/json',
+                            'HTTP-Referer': window.location.href,
+                            'X-Title': document.title || 'Chat App',
+                        },
+                        body: JSON.stringify({
+                            model: 'deepseek/deepseek-chat-v3-0324:free',
+                            //messages: [{ role: 'user', content: input }],
+                            messages: [
+                                {
+                                    role: "system",
+                                    content: `You are ${Sofia_Prompt.name}, a ${Sofia_Prompt.personality}. 
+                                    You must follow these rules: ${Sofia_Prompt.rules.join(". ")}. 
+                                    Always address the user as ${Sofia_Prompt.userTitle}.`
+                                },
+                                { role: 'user', content: input }
+                            ],
+                        }),
+                    }
+                );
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    console.error("API Error:", data);
+                    throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
+                }
+                
+                // Remove loading message
+                responseDiv.removeChild(loadingDiv);
+                
+                const markdownText = data.choices?.[0]?.message?.content || 'No response received.';
+                responseDiv.innerHTML += `<div class="bot-message"><strong>Bot:</strong> ${marked.parse(markdownText)}</div>`;
+                
+                // Stop robot talking animation
+                robotFace.classList.remove('typing');
+                
+                // Scroll to bottom again after response
+                document.querySelector('.chat-container').scrollTop = document.querySelector('.chat-container').scrollHeight;
+                
+            } catch (error) {
+                console.error('Full Error:', error);
+                responseDiv.innerHTML += `<div class="text-danger">Error: ${error.message}</div>`;
+                robotFace.classList.remove('typing');
+                document.querySelector('.chat-container').scrollTop = document.querySelector('.chat-container').scrollHeight;
+            }   
+            // Add this to make eyes blink when sending a message
+            const eyelids = document.querySelectorAll('.eyelid');
+            eyelids.forEach(lid => {
+                lid.style.animation = 'none';
+                setTimeout(() => {
+                    lid.style.animation = '';
+                }, 10);
+            });
+        }
+    </script>
+</body>
+</html>
