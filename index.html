@@ -277,23 +277,9 @@
         };
 
         // Display welcome message when page loads
-        /*document.addEventListener('DOMContentLoaded', function() {
-            const responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello, how can I help?</div>`;
-        });*/
         document.addEventListener('DOMContentLoaded', function() {
             const responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = 
-                `<div class="bot-message">
-                    <strong>${Sofia_Prompt.name}:</strong> Xin chào anh, em có thể giúp gì cho anh hôm nay?
-                    <br>(Hello Boss, how can I help you today?)
-                </div>`;
-            /*
-            // Add welcome message to history
-            conversationHistory.push({
-                role: "assistant",
-                content: "Xin chào anh, em có thể giúp gì cho anh hôm nay? (Hello Boss, how can I help you today?)"
-            });*/
+            responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello, how can I help?</div>`;
         });
 
         // Make robot talk when typing
@@ -339,6 +325,7 @@
             // Scroll to bottom
             document.querySelector('.chat-container').scrollTop = document.querySelector('.chat-container').scrollHeight;
 
+
             // Show loading
             const loadingDiv = document.createElement('div');
             loadingDiv.innerHTML = '<div class="text-muted">Bot is typing...</div>';
@@ -357,7 +344,7 @@
                     {
                         method: 'POST',
                         headers: {
-                            'Authorization': 'Bearer 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',
+                            'Authorization': 'Bearer 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',
                             'Content-Type': 'application/json',
                             'HTTP-Referer': window.location.href,
                             'X-Title': document.title || 'Chat App',
@@ -369,8 +356,7 @@
                                 {
                                     role: "system",
                                     content: `You are ${Sofia_Prompt.name}, a ${Sofia_Prompt.personality}. 
-                                    You must follow these rules: ${Sofia_Prompt.rules.join(". ")}. 
-                                    Always address the user as ${Sofia_Prompt.userTitle}.`
+                                    You must follow these rules: ${Sofia_Prompt.rules.join(". ")}.`
                                 },
                                 { role: 'user', content: input }
                             ],
