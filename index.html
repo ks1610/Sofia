@@ -344,7 +344,7 @@
                     {
                         method: 'POST',
                         headers: {
-                            'Authorization': 'Bearer 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',
+                            'Authorization': 'Bearer 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',
                             'Content-Type': 'application/json',
                             'HTTP-Referer': window.location.href,
                             'X-Title': document.title || 'Chat App',
@@ -397,6 +397,10 @@
                     lid.style.animation = '';
                 }, 10);
             });
+            // Fallback if CDN fails
+            if(typeof marked === 'undefined') {
+                document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"><\/script>');
+            }
         }
     </script>
 </body>
