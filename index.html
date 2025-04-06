@@ -280,11 +280,30 @@
                 "Remember previous conversations and maintain context"
             ]
         };
+        // Conversation history array
+        let conversationHistory = [
+            {
+                role: "system",
+                content: `You are ${Sofia_Prompt.name}, a ${Sofia_Prompt.personality}. 
+                You must follow these rules: ${Sofia_Prompt.rules.join(". ")}.`
+            }
+        ];
+        // Display welcome message when page loads
+        /*document.addEventListener('DOMContentLoaded', function() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello anh, how can I help you today?</div>`;
+        });*/
 
         // Display welcome message when page loads
         document.addEventListener('DOMContentLoaded', function() {
             const responseDiv = document.getElementById('response');
             responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello anh, how can I help you today?</div>`;
+
+            // Add welcome message to history
+            conversationHistory.push({
+                role: "assistant",
+                content: "Hello anh, how can I help you today?"
+            });
         });
 
         // Make robot talk when typing
@@ -326,6 +345,12 @@
             
             // Add user message to chat
             responseDiv.innerHTML += `<div class="user-message"><strong>You:</strong> ${input.replace(/\n/g, '<br>')}</div><hr>`;
+            
+            // Add user message to conversation history
+            conversationHistory.push({
+                role: "user",
+                content: input
+            });
             
             // Scroll to bottom
             document.querySelector('.chat-container').scrollTop = document.querySelector('.chat-container').scrollHeight;
@@ -381,6 +406,12 @@
                 
                 const markdownText = data.choices?.[0]?.message?.content || 'No response received.';
                 responseDiv.innerHTML += `<div class="bot-message"><strong>Bot:</strong> ${marked.parse(markdownText)}</div>`;
+                
+                // Add bot response to conversation history
+                conversationHistory.push({
+                    role: "assistant",
+                    content: markdownText
+                });
                 
                 // Stop robot talking animation
                 robotFace.classList.remove('typing');
