@@ -321,7 +321,7 @@
         // Display welcome message when page loads
         document.addEventListener('DOMContentLoaded', function() {
             const responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = `<div class="bot-message"><strong>Bot:</strong> Hello anh, how can I help you today?</div>`;
+            responseDiv.innerHTML = `<div class="bot-message"><strong>${Sofia_Prompt.name}: </strong> Hello anh, how can I help you today?</div>`;
 
             // Add welcome message to history
             conversationHistory.push({
