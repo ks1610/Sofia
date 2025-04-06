@@ -262,6 +262,11 @@
         </div>
     </div>
     <script>
+        async function getOpenRouterKey() {
+            const response = await fetch("https://silent-bush-4f9e.trinhvinhkhanh1610.workers.dev/");
+            const data = await response.json();
+            return data.key;
+        }
         // Sofia Prompt Configuration
         const Sofia_Prompt = {
             name: "Sofia",
@@ -344,10 +349,10 @@
                     {
                         method: 'POST',
                         headers: {
-                            'Authorization': 'Bearer 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',
-                            'Content-Type': 'application/json',
-                            'HTTP-Referer': window.location.href,
-                            'X-Title': document.title || 'Chat App',
+                            "Authorization": `Bearer ${await getOpenRouterKey()}`, // Dynamically fetch key
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": window.location.href,
+                            "X-Title": "Sofia ChatBot"
                         },
                         body: JSON.stringify({
                             model: 'deepseek/deepseek-chat-v3-0324:free',
@@ -363,7 +368,7 @@
                         }),
                     }
                 );
-                
+
                 const data = await response.json();
                 
                 if (!response.ok) {
