@@ -228,6 +228,30 @@
             border-color: #333;
             margin: 15px 0;
         }
+        /* Custom scrollbar for chat container */
+        .chat-container::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: #1e1e1e; /* Track color */
+            border-radius: 4px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #bb86fc; /* Thumb color - matches your purple theme */
+            border-radius: 4px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #9a67ea; /* Darker purple on hover */
+        }
+
+/* For Firefox */
+.chat-container {
+    scrollbar-width: thin;
+    scrollbar-color: #bb86fc #1e1e1e;
+}
     </style>
 </head>
 <body>
